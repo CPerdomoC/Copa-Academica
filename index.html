@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copa Académica | Fútbol Amateur</title>
+    <link rel="stylesheet" href="CSS/styles.css">
+    <style>
+        .tabla-container {
+            max-height: 480px; 
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            background: white;
+            position: relative;
+        }
+
+        /* Cabecera corregida: fondo blanco sólido y z-index */
+        .tabla-header {
+            position: sticky;
+            top: 0;
+            background-color: #ffffff !important;
+            z-index: 10;
+            border-bottom: 2px solid #eee;
+            display: grid;
+            grid-template-columns: 50px 1fr; /* Espacio generoso para el nombre */
+            padding: 15px;
+            font-weight: bold;
+            color: #17226B;
+        }
+
+        .equipo {
+            display: grid;
+            grid-template-columns: 50px 1fr;
+            padding: 12px 15px;
+            align-items: center;
+            border-bottom: 1px solid #f0f0f0;
+            background: white;
+        }
+
+        .equipo-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            overflow: visible; /* Permite que el nombre se vea entero */
+        }
+
+        .img-escudo {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        .nombre {
+            font-weight: 600;
+            color: #333;
+            white-space: nowrap; /* Evita que el nombre salte de línea */
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="container header-flex">
+        <div class="header-left"><span>Copa Académica</span></div>
+        <div class="header-center">
+            <div class="logo-container"><img src="Assets/trofeo-1.png" alt="Logo"></div>
+        </div>
+        <nav class="nav-container">
+            <a href="index.html">Inicio</a>
+            <a href="equipos.html">Equipos</a>
+            <a href="calendario.html">Calendario</a>
+            <a href="carrera.html">Modo Carrera</a>
+        </nav>
+    </div>
+</header>
+
+<section class="rectangulo">
+    <div class="rectangulo-content">
+        <span class="tag-temporada">Temporada 2025/26</span>
+        <h1>La Pasión del Fútbol Amateur</h1>
+        <p>20 Equipos. Un Sueño.</p>
+    </div>
+</section>
+
+<main class="container main-layout">
+    <section class="estadio-section">
+        <h2 class="titulo-seccion">Sede Oficial</h2>
+        <div class="estadio-card">
+            <div class="estadio-col">
+                <img src="https://www.fdmvalencia.es/wp-content/uploads/2013/04/Riu-Turia-Tram-II.jpg" alt="Estadio">
+                <div class="img-text">Campo Río Turia (Tramo II)</div>
+            </div>
+            <div class="estadio-col">
+                <div class="map-wrapper">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d2047.106224497153!2d-0.3960605777570643!3d39.4765157614528!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1scampo%20de%20futbol%207%20valencia%20rio%20turia!5e1!3m2!1ses!2ses!4v1768562646197!5m2!1ses!2ses"></iframe>             
+                </div>
+            </div>
+        </div>
+        <div class="estadio-desc-footer">
+            <h3 style="color: #17226B; margin-bottom: 10px;">Sobre el estadio</h3>
+            <p>Ubicado en el emblemático cauce del Río Turia, nuestras instalaciones cuentan con césped artificial de última generación, vestuarios renovados y una iluminación óptima.</p>
+        </div>
+    </section>
+
+    <aside class="clasificacion-section">
+        <h2 class="titulo-seccion">Nuestros Equipos</h2>
+        <div class="tabla-container">
+            <div class="tabla-header">
+                <span>#</span><span>Equipo</span>
+            </div>
+            <ul class="lista-equipos" id="lista-equipos-index">
+                </ul>
+        </div>
+    </aside>
+</main>
+
+<footer class="footer">
+    <div class="container footer-content">
+        <div class="footer-section">
+            <div class="logo-container" style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
+                <img src="Assets/trofeo-1.png" alt="Logo">
+                <span style="font-weight:bold; font-size:1.2rem;">Copa Académica</span>
+            </div>
+            <p>La mejor liga amateur de la ciudad. Pasión, respeto y fútbol.</p>
+        </div>
+        <div class="footer-section">
+            <h4>Síguenos</h4>
+            <div class="social-links">
+                <a href="#" class="social-icon">Instagram</a>
+                <a href="#" class="social-icon">Twitter</a>
+                <a href="#" class="social-icon">YouTube</a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2025/26 Copa Académica. Todos los derechos reservados.</p>
+    </div>
+</footer>
+
+<script>
+    const nombresEquipos = ["Real Bétera", "Caipiriña Rovers", "Aston Birra", "Borrachita CF", "Racing de Litrona", "Real Bruggal", "Fireball United", "RedBull Wiskeynsin", "At. Jurdis", "Steua Benimaclet", "Internazionale Erasmus", "Rayo Resacano", "Manchester Piti", "Vodka Juniors", "Bayern de los Caídos", "Atlético de Copas", "Recreativo de Juerga", "Nàstic de Botellón", "Sporting de Gintonic", "Unión Deportiva Resaca"];
+    
+    const lista = document.getElementById('lista-equipos-index');
+    nombresEquipos.forEach((nombre, i) => {
+        lista.innerHTML += `
+            <li class="equipo">
+                <span class="pos">${i + 1}</span>
+                <div class="equipo-info">
+                    <img src="Assets/equipo-${i + 1}.png" class="img-escudo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'">
+                    <span class="nombre">${nombre}</span>
+                </div>
+            </li>`;
+    });
+</script>
+</body>
+</html>

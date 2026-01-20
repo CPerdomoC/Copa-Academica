@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario | Copa Académica</title>
+    <link rel="stylesheet" href="CSS/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-flex">
+            <div class="header-left"><span>Copa Académica</span></div>
+            <div class="header-center">
+                <div class="logo-container"><img src="Assets/trofeo-1.png" alt="Logo"></div>
+            </div>
+            <nav class="nav-container">
+                <a href="index.html">Inicio</a>
+                <a href="equipos.html">Equipos</a>
+                <a href="calendario.html">Calendario</a>
+                <a href="carrera.html">Modo Carrera</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="full-table-section" style="margin-top: 40px;">
+            <div class="seccion-encabezado-flex">
+                <div class="texto-encabezado">
+                    <h2 id="mes-anio-titulo" class="titulo-seccion">Calendario</h2>
+                    <p class="subtitulo">Planificación mensual de la liga</p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="cambiarMes(-1)" class="btn-simular">Anterior</button>
+                    <button onclick="cambiarMes(1)" class="btn-simular">Siguiente</button>
+                </div>
+            </div>
+
+            <div class="calendario-mensual">
+                <div class="dias-semana">
+                    <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+                </div>
+                <div id="calendario-grid-mensual" class="grid-dias"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const equipos = ["Real Mas Camarena", "Socialismo Gangoso II", "Aston Birra", "Borrachita CF", "KFC Villalba", "Real Bruggal", "CD El Palo", "RedBull Wiskeynsin", "At. Jurdis", "Steua Benimaclet", "Inter de Mitre", "Rayo Vayaca", "Nottingham Preso", "Vodka Juniors", "Bayern de los Caídos", "Patético de Madrid", "Recreativo de Juerga", "Nàstic de Botellón", "Sporting de Gintonic", "Pabellón y Amigos"];
+        let fechaActual = new Date();
+
+        function cambiarMes(delta) {
+            fechaActual.setMonth(fechaActual.getMonth() + delta);
+            renderizarCalendario();
+        }
+
+        function renderizarCalendario() {
+            const grid = document.getElementById('calendario-grid-mensual');
+            const titulo = document.getElementById('mes-anio-titulo');
+            grid.innerHTML = "";
+
+            const anio = fechaActual.getFullYear();
+            const mes = fechaActual.getMonth();
+            titulo.innerText = `${new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(fechaActual).toUpperCase()} ${anio}`;
+
+            const primerDia = new Date(anio, mes, 1).getDay();
+            const ajuste = primerDia === 0 ? 6 : primerDia - 1;
+            const diasMes = new Date(anio, mes + 1, 0).getDate();
+
+            let partidos = [];
+            let pool = [...equipos].sort(() => Math.random() - 0.5);
+            for(let i=0; i<pool.length; i+=2) {
+                partidos.push({
+                    loc: pool[i], escL: `Assets/equipo-${equipos.indexOf(pool[i])+1}.png`,
+                    vis: pool[i+1], escV: `Assets/equipo-${equipos.indexOf(pool[i+1])+1}.png`
+                });
+            }
+
+            for (let i = 0; i < ajuste; i++) grid.innerHTML += `<div class="dia-celda fuera-mes"></div>`;
+
+            for (let d = 1; d <= diasMes; d++) {
+                let htmlPartido = "";
+                if (Math.random() > 0.7 && partidos.length > 0) {
+                    const p = partidos.pop();
+                    htmlPartido = `<div class="partido-evento">
+                        <div style="display:flex; align-items:center; gap:5px; margin-bottom:2px">
+                            <img src="${p.escL}" style="width:12px" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'"> 
+                            <span style="font-size: 0.6rem;">${p.loc.substring(0,10)}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:5px">
+                            <img src="${p.escV}" style="width:12px" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'"> 
+                            <span style="font-size: 0.6rem;">${p.vis.substring(0,10)}</span>
+                        </div>
+                    </div>`;
+                }
+                grid.innerHTML += `<div class="dia-celda"><span class="dia-numero">${d}</span>${htmlPartido}</div>`;
+            }
+        }
+        window.onload = renderizarCalendario;
+    </script>
+</body>
+</html>

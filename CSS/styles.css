@@ -1,0 +1,625 @@
+/* CONFIGURACIÓN BASE */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background-color: #f0f2f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* HEADER FIJO */
+/* HEADER REDISEÑADO */
+.header {
+    background-color: #17226B;
+    padding: 10px 0;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Las tres partes ocupan el mismo espacio */
+.header-left, 
+.header-center, 
+.nav-container {
+    flex: 1; 
+}
+
+/* Alineación específica para cada bloque */
+.header-left {
+    display: flex;
+    justify-content: flex-start;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.header-center {
+    display: flex;
+    justify-content: center;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+/* Estilo del logo */
+.logo-container img {
+    width: 45px;
+    height: auto;
+    display: block;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 40px;
+    align-items: center;
+}
+
+.nav-container a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Efecto visual al pasar el ratón*/
+.nav-container a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background-color: #FFD600;
+    transition: width 0.3s;
+}
+
+.nav-container a:hover::after {
+    width: 100%;
+}
+
+.nav-container a:hover {
+    color: #FFD600;
+}
+
+/* IMPORTANTE: Quitar el filtro del footer también */
+.footer .logo-container img {
+    filter: none;
+    width: 40px;
+}
+
+/* RECTÁNGULO CON TU FOTO LOCAL BAJO EL DEGRADADO */
+.rectangulo {
+    position: relative;
+    background-image: 
+        linear-gradient(135deg, rgba(23, 34, 107, 0.85), rgba(31, 166, 122, 0.85)),
+        url('../san-siro.jpg');
+    
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    
+    color: white;
+    text-align: center;
+    padding: 120px 20px;
+    margin-bottom: 40px;
+}
+
+.tag-temporada {
+    display: inline-block;
+    background: #FFD600;
+    color: #17226B;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* SECCIÓN PRÓXIMA JORNADA */
+.proxima-jornada {
+    margin-bottom: 40px;
+}
+
+.jornada-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.jornada-header h2 {
+    color: #17226B;
+    font-size: 1.4rem;
+}
+
+.vivo-icon {
+    color: #ef4444;
+    animation: palpitar 1.5s infinite;
+}
+
+@keyframes palpitar {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+.partidos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.partido-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-bottom: 4px solid #FFD600;
+}
+
+.partido-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #718096;
+    margin-bottom: 15px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.enfrentamiento {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.equipo-partido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.equipo-partido img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.equipo-partido span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+    color: #2d3748;
+}
+
+.vs {
+    font-weight: 900;
+    color: #cbd5e0;
+    font-style: italic;
+    padding: 0 10px;
+}
+
+/* Ajuste al pasar el ratón */
+.partido-card:hover {
+    transform: translateY(-5px);
+    transition: 0.3s;
+}
+
+/* LAYOUT PRINCIPAL */
+.main-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    padding-bottom: 50px;
+}
+
+.estadio-section { flex: 2; }
+.clasificacion-section { flex: 1; }
+
+.titulo-seccion {
+    color: #17226B;
+    margin-bottom: 20px;
+}
+
+/* TARJETAS */
+/* CONTENEDOR PRINCIPAL DEL ESTADIO */
+.estadio-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: stretch;
+    min-height: 450px;
+    margin-bottom: 15px;
+}
+
+/* COLUMNAS (Imagen y Mapa) */
+.estadio-col {
+    flex: 1;
+    position: relative;
+    display: flex;
+}
+
+.estadio-col img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.map-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.map-wrapper iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
+/* TEXTO SOBRE LA IMAGEN */
+.img-text {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: rgba(23, 34, 107, 0.7);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+/* DESCRIPCIÓN FUERA DE LA CARD */
+.estadio-desc-footer {
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+    padding: 10px;
+    background: #e2e8f0;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* RESPONSIVO: En móviles se ponen uno encima de otro */
+@media (max-width: 850px) {
+    .estadio-card {
+        flex-direction: column;
+        min-height: auto;
+    }
+    .estadio-col {
+        height: 250px;
+    }
+}
+
+/* TABLA Y LÍDER */
+.tabla-container { padding: 20px; }
+.tabla-header, .equipo {
+    display: grid;
+    grid-template-columns: 30px 1fr 40px 40px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+}
+
+.lista-equipos { list-style: none; }
+.equipo-info { display: flex; align-items: center; gap: 10px; }
+.equipo-info img { width: 22px; }
+.pts { font-weight: bold; color: #17226B; text-align: center; }
+
+/* RESALTADO DEL LÍDER */
+.equipo.lider {
+    background: linear-gradient(90deg, #fff9c4, transparent);
+    border-left: 5px solid #FFD600;
+    border-radius: 5px;
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.equipo.lider .pos { color: #d4af37; font-weight: 800; }
+
+/* FOOTER */
+/* FOOTER */
+.footer {
+    background-color: #111950;
+    color: white;
+    padding: 60px 0 20px 0;
+    margin-top: 50px;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-section h4 {
+    color: #FFD600;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+}
+
+.footer-section p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #cbd5e0;
+    max-width: 300px;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+.footer-section ul li a:hover {
+    color: #FFD600;
+}
+
+.social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.social-icon {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.social-icon:hover {
+    color: #FFD600;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #a0aec0;
+}
+
+/* Ajuste para móviles */
+@media (max-width: 850px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    .footer-section p {
+        margin: 0 auto;
+    }
+    .social-links {
+        align-items: center;
+    }
+}
+
+/* RESPONSIVO */
+@media (max-width: 850px) {
+    .main-layout { flex-direction: column; }
+    .header-flex { flex-direction: column; gap: 10px; }
+}
+
+/* ============================================================
+   NUEVOS ESTILOS PARA EQUIPOS.HTML (GRUPOS A Y B)
+   ============================================================ */
+
+/* Encabezado de la sección (Título y Botón) */
+.seccion-encabezado-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* BOTÓN SIMULAR (Corregido y añadido) */
+.btn-simular {
+    background-color: #17226B !important;
+    color: white !important;
+    border: 2px solid #FFD600 !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    transition: 0.3s !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.btn-simular:hover {
+    background-color: #FFD600 !important;
+    color: #17226B !important;
+    transform: translateY(-2px);
+}
+
+/* Contenedor de los dos grupos */
+.grupos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+
+/* Título de cada grupo */
+.titulo-grupo {
+    background: #17226B;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    margin: 0;
+    border-radius: 10px 10px 0 0;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Estructura de la tabla (7 columnas: #, Equipo, PJ, G, E, P, Pts) */
+.tabla-header-full, 
+.lista-equipos .equipo {
+    display: grid;
+    grid-template-columns: 35px 1fr 35px 35px 35px 35px 45px !important;
+    padding: 12px 10px;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+    background-color: white;
+}
+
+.tabla-header-full {
+    font-weight: bold;
+    color: #718096;
+    background: #f8fafc;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+/* Ajustes de la info del equipo */
+.equipo-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-start;
+    overflow: hidden;
+}
+
+.img-escudo {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.nombre {
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+}
+
+/* Puntos destacados */
+.pts {
+    font-weight: 900;
+    color: #17226B;
+}
+
+/* Colores de las zonas de clasificación */
+.equipo.lider { border-left: 5px solid #FFD600 !important; background-color: #fffde7; }
+.equipo.champions { border-left: 5px solid #3b82f6 !important; }
+.equipo.ascenso { border-left: 5px solid #1fa67a !important; }
+.equipo.descenso { border-left: 5px solid #ef4444 !important; }
+
+/* Leyenda inferior */
+.leyenda-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.leyenda-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 500; }
+.box { width: 14px; height: 14px; border-radius: 3px; }
+.box.lider { background: #FFD600; }
+.box.champions { background: #3b82f6; }
+.box.ascenso { background: #1fa67a; }
+.box.descenso { background: #ef4444; }
+
+/* Responsivo para móviles */
+@media (max-width: 550px) {
+    .seccion-encabezado-flex {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    .grupos-grid {
+        grid-template-columns: 1fr;
+    }
+    .tabla-header-full, .lista-equipos .equipo {
+        font-size: 0.7rem;
+        padding: 10px 5px;
+        grid-template-columns: 25px 1fr 25px 25px 25px 25px 35px !important;
+    }
+}
+
+/*----------------------------------------------------CALENDARIO.html------------------------------------*/
+.calendario-mensual { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.dias-semana { display: grid; grid-template-columns: repeat(7, 1fr); background: #333; color: white; text-align: center; padding: 10px 0; font-weight: bold; }
+.grid-dias { display: grid; grid-template-columns: repeat(7, 1fr); border: 1px solid #ddd; }
+.dia-celda { min-height: 100px; border: 1px solid #eee; padding: 5px; position: relative; }
+.dia-numero { font-weight: bold; color: #777; margin-bottom: 5px; display: block; }
+.partido-evento { background: #e3f2fd; border-left: 4px solid #2196f3; font-size: 0.7rem; padding: 2px 4px; margin-bottom: 2px; border-radius: 2px; color: #0d47a1; }
+.fuera-mes { background: #f9f9f9; color: #ccc; }
+
+/*-----------------------------------------------------Carrera.html---------------------------------------*/
+/* Feed de noticias */
+.feed-noticias {
+    background: #17226B;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.noticia-item {
+    border-left: 3px solid #FFD600;
+    padding-left: 10px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+}
+
+/* Animación de carga */
+.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
