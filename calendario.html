@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendario | Copa Académica</title>
     <link rel="stylesheet" href="CSS/styles.css">
 </head>
@@ -10,9 +9,7 @@
     <header class="header">
         <div class="container header-flex">
             <div class="header-left"><span>Copa Académica</span></div>
-            <div class="header-center">
-                <div class="logo-container"><img src="Assets/trofeo-1.png" alt="Logo"></div>
-            </div>
+            <div class="header-center"><div class="logo-container"><img src="Assets/trofeo-1.png" alt="Logo"></div></div>
             <nav class="nav-container">
                 <a href="index.html">Inicio</a>
                 <a href="equipos.html">Equipos</a>
@@ -23,11 +20,10 @@
     </header>
 
     <main class="container">
-        <section class="full-table-section" style="margin-top: 40px;">
+        <section class="full-table-section">
             <div class="seccion-encabezado-flex">
                 <div class="texto-encabezado">
-                    <h2 id="mes-anio-titulo" class="titulo-seccion">Calendario</h2>
-                    <p class="subtitulo">Planificación mensual de la liga</p>
+                    <h2 id="mes-anio-titulo" class="titulo-seccion">Calendario Oficial</h2>
                 </div>
                 <div style="display: flex; gap: 10px;">
                     <button onclick="cambiarMes(-1)" class="btn-simular">Anterior</button>
@@ -44,9 +40,50 @@
         </section>
     </main>
 
+    <script src="funciones.js"></script>
     <script>
-        const equipos = ["Real Mas Camarena", "Socialismo Gangoso II", "Aston Birra", "Borrachita CF", "KFC Villalba", "Real Bruggal", "CD El Palo", "RedBull Wiskeynsin", "At. Jurdis", "Steua Benimaclet", "Inter de Mitre", "Rayo Vayaca", "Nottingham Preso", "Vodka Juniors", "Bayern de los Caídos", "Patético de Madrid", "Recreativo de Juerga", "Nàstic de Botellón", "Sporting de Gintonic", "Pabellón y Amigos"];
-        let fechaActual = new Date();
+        // Configuración Inicial
+        let fechaActual = new Date(2025, 8, 1); // Empezamos en Septiembre 2025
+        let calendarioCompleto = []; 
+
+        function generarTemporada() {
+            let equipos = [...nombresEquiposBase]; 
+            let totalJornadas = equipos.length - 1; 
+            let partidos = [];
+
+            // Algoritmo de Berger (Todos contra todos)
+            for (let j = 0; j < totalJornadas; j++) {
+                // Definimos el Domingo de la jornada (empieza el 7 de sept y suma 7 días cada vez)
+                let fechaDomingo = new Date(2025, 8, 7 + (j * 7));
+                
+                for (let i = 0; i < equipos.length / 2; i++) {
+                    let local = equipos[i];
+                    let visit = equipos[equipos.length - 1 - i];
+                    
+                    if (j % 2 === 1) [local, visit] = [visit, local];
+
+                    // TRUCO: Los 5 primeros partidos al Sábado (-1 día), los otros 5 al Domingo
+                    let fechaPartido = new Date(fechaDomingo); // Clonamos la fecha base
+                    if (i < 5) {
+                        fechaPartido.setDate(fechaDomingo.getDate() - 1); // Sábado
+                    } else {
+                        fechaPartido.setDate(fechaDomingo.getDate());     // Domingo
+                    }
+
+                    partidos.push({
+                        fecha: fechaPartido, // Ahora cada partido tiene su propia fecha exacta
+                        local: local,
+                        visit: visit,
+                        escL: `Assets/${obtenerNombreEscudo(local)}`,
+                        escV: `Assets/${obtenerNombreEscudo(visit)}`
+                    });
+                }
+                
+                // Rotación de equipos
+                equipos.splice(1, 0, equipos.pop());
+            }
+            return partidos;
+        }
 
         function cambiarMes(delta) {
             fechaActual.setMonth(fechaActual.getMonth() + delta);
@@ -62,40 +99,39 @@
             const mes = fechaActual.getMonth();
             titulo.innerText = `${new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(fechaActual).toUpperCase()} ${anio}`;
 
-            const primerDia = new Date(anio, mes, 1).getDay();
-            const ajuste = primerDia === 0 ? 6 : primerDia - 1;
+            const primerDia = new Date(anio, mes, 1).getDay(); 
+            const diaSemanaInicio = primerDia === 0 ? 6 : primerDia - 1; 
             const diasMes = new Date(anio, mes + 1, 0).getDate();
 
-            let partidos = [];
-            let pool = [...equipos].sort(() => Math.random() - 0.5);
-            for(let i=0; i<pool.length; i+=2) {
-                partidos.push({
-                    loc: pool[i], escL: `Assets/equipo-${equipos.indexOf(pool[i])+1}.png`,
-                    vis: pool[i+1], escV: `Assets/equipo-${equipos.indexOf(pool[i+1])+1}.png`
-                });
-            }
-
-            for (let i = 0; i < ajuste; i++) grid.innerHTML += `<div class="dia-celda fuera-mes"></div>`;
+            for (let i = 0; i < diaSemanaInicio; i++) grid.innerHTML += `<div class="dia-celda fuera-mes"></div>`;
 
             for (let d = 1; d <= diasMes; d++) {
-                let htmlPartido = "";
-                if (Math.random() > 0.7 && partidos.length > 0) {
-                    const p = partidos.pop();
-                    htmlPartido = `<div class="partido-evento">
-                        <div style="display:flex; align-items:center; gap:5px; margin-bottom:2px">
-                            <img src="${p.escL}" style="width:12px" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'"> 
-                            <span style="font-size: 0.6rem;">${p.loc.substring(0,10)}</span>
+                // Filtramos partidos que coincidan en día, mes y año exactos
+                let partidosHoy = calendarioCompleto.filter(p => 
+                    p.fecha.getDate() === d && 
+                    p.fecha.getMonth() === mes && 
+                    p.fecha.getFullYear() === anio
+                );
+
+                let htmlPartidos = partidosHoy.map(p => `
+                    <div class="partido-evento">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:2px">
+                            <span>${p.local}</span> <img src="${p.escL}" style="width:12px">
                         </div>
-                        <div style="display:flex; align-items:center; gap:5px">
-                            <img src="${p.escV}" style="width:12px" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'"> 
-                            <span style="font-size: 0.6rem;">${p.vis.substring(0,10)}</span>
+                        <div style="display:flex; justify-content:space-between">
+                            <span>${p.visit}</span> <img src="${p.escV}" style="width:12px">
                         </div>
-                    </div>`;
-                }
-                grid.innerHTML += `<div class="dia-celda"><span class="dia-numero">${d}</span>${htmlPartido}</div>`;
+                    </div>
+                `).join('');
+
+                grid.innerHTML += `<div class="dia-celda"><span class="dia-numero">${d}</span>${htmlPartidos}</div>`;
             }
         }
-        window.onload = renderizarCalendario;
+
+        window.onload = function() {
+            calendarioCompleto = generarTemporada();
+            renderizarCalendario();
+        };
     </script>
 </body>
 </html>
