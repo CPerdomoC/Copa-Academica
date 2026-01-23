@@ -2,54 +2,14 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clasificación Permanente | Copa Académica</title>
+    <title>Equipos | Copa Académica</title>
     <link rel="stylesheet" href="CSS/styles.css">
-    <style>
-        .grupos-grid { grid-template-columns: 1fr !important; }
-        .controles-jornada {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin: 20px 0;
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        .jornada-actual {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #17226B;
-            min-width: 150px;
-            text-align: center;
-        }
-        .btn-jornada {
-            background-color: #17226B;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .btn-jornada:disabled { background-color: #ccc; cursor: not-allowed; }
-        .btn-jornada:hover:not(:disabled) { background-color: #FFD600; color: #17226B; }
-        
-        /* Asegurar que el nombre no se corte */
-        .equipo-info { overflow: visible; }
-        .nombre { white-space: nowrap; }
-    </style>
 </head>
 <body>
     <header class="header">
         <div class="container header-flex">
             <div class="header-left"><span>Copa Académica</span></div>
-            <div class="header-center">
-                <div class="logo-container"><img src="Assets/trofeo-1.png" alt="Logo"></div>
-            </div>
+            <div class="header-center"><div class="logo-container"><img src="Assets/trofeo-1.png" alt="Logo"></div></div>
             <nav class="nav-container">
                 <a href="index.html">Inicio</a>
                 <a href="equipos.html">Equipos</a>
@@ -60,115 +20,36 @@
     </header>
 
     <main class="container">
-        <section class="full-table-section" style="margin-top: 40px;">
-            <div class="seccion-encabezado-flex">
-                <div class="texto-encabezado">
-                    <h2 class="titulo-seccion">Clasificación de la Liga</h2>
-                    <p class="subtitulo">Temporada Completa (Datos Guardados)</p>
-                </div>
-            </div>
-
-            <div class="controles-jornada">
-                <button id="btn-prev" class="btn-jornada" onclick="cambiarJornada(-1)">Anterior</button>
-                <div id="display-jornada" class="jornada-actual">Jornada 0</div>
-                <button id="btn-next" class="btn-jornada" onclick="cambiarJornada(1)">Siguiente</button>
-            </div>
-
-            <div class="grupos-grid">
-                <div class="tabla-container">
-                    <div class="tabla-header-full">
-                        <span>#</span><span>Equipo</span><span>PJ</span><span>G</span><span>E</span><span>P</span><span>Pts</span>
-                    </div>
-                    <ul class="lista-equipos" id="tabla-unica"></ul>
-                </div>
-            </div>
-        </section>
+        <h2 class="titulo-seccion" style="margin-top: 40px;">Clubes Oficiales</h2>
+        <div id="grid-equipos" class="equipos-grid"></div>
     </main>
 
+    <script src="funciones.js"></script>
     <script>
-        const nombresEquipos = ["Real Bétera", "Caipiriña Rovers", "Aston Birra", "Borrachita CF", "Racing de Litrona", "Real Bruggal", "Fireball United", "RedBull Wiskeynsin", "At. Jurdis", "Steua Benimaclet", "Internazionale Erasmus", "Rayo Resacano", "Manchester Piti", "Vodka Juniors", "Bayern de los Caídos", "Atlético de Copas", "Recreativo de Juerga", "Nàstic de Botellón", "Sporting de Gintonic", "Unión Deportiva Resaca"];
+        const grid = document.getElementById('grid-equipos');
         
-        let jornadaActual = 0;
-        // Esta variable guardará todos los resultados de todas las jornadas de forma fija
-        const historialTemporada = [];
-
-        function inicializarTemporada() {
-            // 1. Creamos el estado inicial (Jornada 0)
-            let estadoEquipos = nombresEquipos.map((nombre, i) => ({
-                nombre,
-                img: `Assets/equipo-${i+1}.png`,
-                pj: 0, g: 0, e: 0, p: 0, pts: 0
-            }));
-
-            // Guardamos la Jornada 0
-            historialTemporada.push(JSON.parse(JSON.stringify(estadoEquipos)));
-
-            // 2. Pre-calculamos de la Jornada 1 a la 19
-            for (let j = 1; j <= 19; j++) {
-                estadoEquipos = estadoEquipos.map(eq => {
-                    const r = Math.random();
-                    let ng = eq.g, ne = eq.e, np = eq.p;
-                    
-                    if (r > 0.6) ng++;
-                    else if (r > 0.3) ne++;
-                    else np++;
-
-                    return {
-                        ...eq,
-                        pj: j,
-                        g: ng, e: ne, p: np,
-                        pts: (ng * 3) + ne
-                    };
-                });
-                // Guardamos una copia profunda de este estado
-                historialTemporada.push(JSON.parse(JSON.stringify(estadoEquipos)));
-            }
-            renderizarTabla();
-        }
-
-        function cambiarJornada(delta) {
-            const nueva = jornadaActual + delta;
-            if (nueva >= 0 && nueva <= 19) {
-                jornadaActual = nueva;
-                renderizarTabla();
-            }
-        }
-
-        function renderizarTabla() {
-            const tabla = document.getElementById('tabla-unica');
-            const display = document.getElementById('display-jornada');
-            const btnPrev = document.getElementById('btn-prev');
-            const btnNext = document.getElementById('btn-next');
-
-            display.innerText = `Jornada ${jornadaActual}`;
-            btnPrev.disabled = (jornadaActual === 0);
-            btnNext.disabled = (jornadaActual === 19);
-
-            tabla.innerHTML = "";
+        /* equipos.html */
+        nombresEquiposBase.forEach(nombre => {
+            const nombreArchivo = obtenerNombreEscudo(nombre);
             
-            // Obtenemos los datos fijos de esa jornada y los ordenamos para la vista
-            const datosJornada = [...historialTemporada[jornadaActual]].sort((a, b) => b.pts - a.pts);
+            // Buscamos la historia en nuestro diccionario. 
+            // Si no existe, ponemos un texto genérico.
+            const descripcion = historiasEquipos[nombre] || `La historia de ${nombre} está por escribirse. Un club con ambición y valores.`;
 
-            datosJornada.forEach((eq, idx) => {
-                let clase = idx === 0 ? "lider" : (idx < 4 ? "champions" : (idx > 15 ? "descenso" : ""));
-                
-                tabla.innerHTML += `
-                    <li class="equipo ${clase}">
-                        <span class="pos">${idx + 1}</span>
-                        <div class="equipo-info">
-                            <img src="${eq.img}" class="img-escudo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'">
-                            <span class="nombre">${eq.nombre}</span>
-                        </div>
-                        <span>${eq.pj}</span>
-                        <span>${eq.g}</span>
-                        <span>${eq.e}</span>
-                        <span>${eq.p}</span>
-                        <span class="pts">${eq.pts}</span>
-                    </li>`;
-            });
-        }
-
-        window.onload = inicializarTemporada;
+            grid.innerHTML += `
+                <div class="equipo-card">
+                    <div class="card-header">
+                        <img src="Assets/${nombreArchivo}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'">
+                        <h3>${nombre}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p contenteditable="true" class="editable-text">
+                            ${descripcion}
+                        </p>
+                    </div>
+                </div>
+            `;
+        });
     </script>
 </body>
 </html>
