@@ -51,10 +51,9 @@
             let totalJornadas = equipos.length - 1; 
             let partidos = [];
 
-            // Algoritmo de Berger (Todos contra todos)
             for (let j = 0; j < totalJornadas; j++) {
-                // Definimos el Domingo de la jornada (empieza el 7 de sept y suma 7 días cada vez)
-                let fechaDomingo = new Date(2025, 8, 7 + (j * 7));
+
+                let fechaLunes = new Date(2025, 8, 1 + (j * 7)); 
                 
                 for (let i = 0; i < equipos.length / 2; i++) {
                     let local = equipos[i];
@@ -62,16 +61,15 @@
                     
                     if (j % 2 === 1) [local, visit] = [visit, local];
 
-                    // TRUCO: Los 5 primeros partidos al Sábado (-1 día), los otros 5 al Domingo
-                    let fechaPartido = new Date(fechaDomingo); // Clonamos la fecha base
-                    if (i < 5) {
-                        fechaPartido.setDate(fechaDomingo.getDate() - 1); // Sábado
-                    } else {
-                        fechaPartido.setDate(fechaDomingo.getDate());     // Domingo
-                    }
+                    // REPARTO SEMANAL:
+                    // i va de 0 a 9 (10 partidos). 
+                    // Usamos % 7 para que los partidos se repartan de Lunes (0) a Domingo (6)
+                    let fechaPartido = new Date(fechaLunes);
+                    let diaExtra = i % 7; 
+                    fechaPartido.setDate(fechaLunes.getDate() + diaExtra);
 
                     partidos.push({
-                        fecha: fechaPartido, // Ahora cada partido tiene su propia fecha exacta
+                        fecha: fechaPartido,
                         local: local,
                         visit: visit,
                         escL: `Assets/${obtenerNombreEscudo(local)}`,
@@ -79,7 +77,7 @@
                     });
                 }
                 
-                // Rotación de equipos
+                // Rotación de equipos (Algoritmo de Berger)
                 equipos.splice(1, 0, equipos.pop());
             }
             return partidos;
@@ -115,11 +113,13 @@
 
                 let htmlPartidos = partidosHoy.map(p => `
                     <div class="partido-evento">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:2px">
-                            <span>${p.local}</span> <img src="${p.escL}" style="width:12px">
+                        <div class="fila-equipo-cal" style="margin-bottom: 4px;">
+                            <span>${p.local}</span> 
+                            <img src="${p.escL}" class="img-escudo-calendario" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'">
                         </div>
-                        <div style="display:flex; justify-content:space-between">
-                            <span>${p.visit}</span> <img src="${p.escV}" style="width:12px">
+                        <div class="fila-equipo-cal">
+                            <span>${p.visit}</span> 
+                            <img src="${p.escV}" class="img-escudo-calendario" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'">
                         </div>
                     </div>
                 `).join('');

@@ -25,31 +25,32 @@
     </main>
 
     <script src="funciones.js"></script>
-    <script>
-        const grid = document.getElementById('grid-equipos');
-        
-        /* equipos.html */
-        nombresEquiposBase.forEach(nombre => {
-            const nombreArchivo = obtenerNombreEscudo(nombre);
+        <script>
+            const grid = document.getElementById('grid-equipos');
             
-            // Buscamos la historia en nuestro diccionario. 
-            // Si no existe, ponemos un texto genérico.
-            const descripcion = historiasEquipos[nombre] || `La historia de ${nombre} está por escribirse. Un club con ambición y valores.`;
+            nombresEquiposBase.forEach(nombre => {
+                const nombreArchivo = obtenerNombreEscudo(nombre);
+                const pais = origenesEquipos[nombre] || "espana";
+                const descripcion = historiasEquipos[nombre] || `La historia de ${nombre} está por escribirse...`;
 
-            grid.innerHTML += `
-                <div class="equipo-card">
-                    <div class="card-header">
-                        <img src="Assets/${nombreArchivo}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'">
-                        <h3>${nombre}</h3>
+                grid.innerHTML += `
+                    <div class="equipo-card">
+                        <div class="card-header">
+                            <div class="bandera-fondo" style="background-image: url('Assets/${pais}.png')">
+                                <div class="escudo-protector">
+                                    <img src="Assets/${nombreArchivo}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'">
+                                </div>
+                            </div>
+                            <h3>${nombre}</h3>
+                        </div>
+                        <div class="card-body">
+                            <p contenteditable="true" class="editable-text">
+                                ${descripcion}
+                            </p>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p contenteditable="true" class="editable-text">
-                            ${descripcion}
-                        </p>
-                    </div>
-                </div>
-            `;
-        });
-    </script>
+                `;
+            });
+        </script>
 </body>
 </html>
