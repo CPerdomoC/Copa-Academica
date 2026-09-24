@@ -24,7 +24,7 @@
         <section class="hero-banner">
             <h1>Bienvenidos a la Copa Académica</h1>
             <p>La competición donde la amistad y la rivalidad se encuentran.</p>
-            <div class="season-badge">Temporada 2025/26</div>
+            <div id="season-badge" class="season-badge">Temporada actual</div>
         </section>
 
         <div class="stats-container">
@@ -99,8 +99,13 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2025/26 Copa Académica. Todos los derechos reservados.</p>
+            <p>© Copa Académica. Todos los derechos reservados.</p>
         </div>
     </footer>
 </body>
+<script src="funciones.js"></script>
+<script>
+    const temporadaInicio = new Date().getMonth() >= 8 ? new Date().getFullYear() : new Date().getFullYear() - 1;
+    document.getElementById("season-badge").innerText = `Temporada ${temporadaInicio}/${String(temporadaInicio + 1).slice(-2)}`;
+</script>
 </html>

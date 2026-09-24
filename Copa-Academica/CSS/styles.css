@@ -250,7 +250,7 @@ body {
 .input-group input, .input-group select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; background: #fdfdfd; }
 .hidden { display: none; }
 .seccion-encabezado-flex { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
-.game-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 20px; }
+.game-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 20px; align-items: start; }
 .tabla-container { background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; }
 .tabla-header-full { display: grid; grid-template-columns: 40px 1fr 40px 40px 40px 40px 50px; padding: 15px; background: #17226B; color: white; font-weight: bold; text-align: center; }
 .tabla-header-full span:nth-child(2) { text-align: left; padding-left: 10px; }
@@ -267,6 +267,11 @@ body {
 
 /* Resultados Detallados Jornada */
 .resultados-jornada { background: #fff; border-radius: 12px; padding: 20px; margin-top: 25px; border: 1px solid #ddd; }
+.resultados-jornada summary, .estadisticas-carrera summary { cursor: pointer; color: #17226B; font-weight: bold; font-size: 1.15rem; }
+.resultados-jornada summary { text-align: center; margin-bottom: 20px; }
+.pichichi-panel { align-self: start; padding: 15px; }
+.pichichi-panel h3 { color: #17226B; border-bottom: 2px solid #FFD600; padding-bottom: 5px; margin: 0; }
+.pichichi-panel .goleadores-list { max-height: 520px; overflow-y: auto; }
 .partido-detallado { border-bottom: 2px solid #f0f0f0; padding: 25px 0; }
 .marcador-contenedor { display: flex; align-items: center; justify-content: center; gap: 20px; margin-bottom: 15px; }
 .equipo-bloque { flex: 1; display: flex; align-items: center; gap: 10px; font-weight: bold; color: #17226B; font-size: 1.1rem; }
@@ -280,25 +285,34 @@ body {
 .gol-local { text-align: right; border-right: 3px solid #3b82f6; padding-right: 15px; }
 .gol-visitante { text-align: left; border-left: 3px solid #ef4444; padding-left: 15px; }
 .goleadores-list { list-style: none; padding: 0; }
-.goleador-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; align-items: center; }
+.goleador-item { display: flex; justify-content: space-between; padding: 7px 10px; border-bottom: 1px solid #eee; align-items: center; }
 .loading { opacity: 0.5; pointer-events: none; transition: 0.3s; }
+.estadisticas-carrera { margin-top: 25px; padding: 20px; }
+.estadisticas-carrera[open] { padding-bottom: 20px; }
+.estadisticas-carrera h3 { color: #17226B; margin-bottom: 8px; }
+.filtro-estadisticas { display: flex; align-items: center; gap: 10px; margin: 12px 0 18px; color: #17226B; font-weight: bold; }
+.filtro-estadisticas select { padding: 9px; border: 1px solid #d1d5db; border-radius: 5px; background: white; }
+.resumen-final-carrera { margin-top: 15px; padding: 12px; background: #fffbe6; border-left: 4px solid #FFD600; color: #17226B; font-weight: bold; }
 
 /* ==========================================================================
    6. CALENDARIO.HTML
    ========================================================================== */
-.full-table-section { margin-bottom: 40px; margin-top: 40px; max-width: 1300px; margin-left: auto; margin-right: auto; }
-.calendario-mensual { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 20px; }
-.dias-semana { display: grid; grid-template-columns: repeat(7, 1fr); background: #333; color: white; text-align: center; padding: 10px 0; font-weight: bold; }
-.grid-dias { display: grid; grid-template-columns: repeat(7, 1fr); border: 1px solid #ddd; }
+.calendario-main { max-width: 1320px; padding: 0 14px; }
+.calendario-layout { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 16px; align-items: start; margin: 18px auto 28px; width: 100%; }
+.full-table-section { min-width: 0; }
+.calendario-mensual { background: var(--fondo-estacion, white); border-radius: 10px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.07); margin-top: 8px; }
+.dias-semana { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); background: var(--color-estacion, #333); color: white; text-align: center; padding: 10px 0; font-weight: bold; white-space: nowrap; }
+.grid-dias { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-auto-columns: minmax(0, 1fr); grid-auto-flow: row; border: 1px solid #ddd; }
 
 .dia-celda {
-    min-height: 150px;
+    min-height: 132px;
     border: 1px solid #eee;
-    padding: 10px;
-    font-size: 0.9rem;
-    background: white;
+    padding: 8px;
+    font-size: 0.84rem;
+    background: var(--fondo-celda-estacion, white);
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .dia-numero { font-weight: bold; color: #777; margin-bottom: 8px; display: block; }
@@ -306,16 +320,27 @@ body {
 .partido-evento {
     cursor: pointer;
     transition: 0.2s;
-    margin-bottom: 8px;
-    padding: 6px;
+    margin-bottom: 6px;
+    padding: 5px;
     background: #f8fafc;
     border-radius: 6px;
-    font-size: 0.8rem;
-    border-left: 4px solid #17226B;
+    font-size: 0.74rem;
+    border-left: 4px solid var(--color-partido, #17226B);
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .partido-evento:hover { background: #e2e8f0; transform: scale(1.02); }
+.calendario-main[data-estacion="verano"] { --color-estacion: #d97706; --fondo-estacion: #fffbeb; --fondo-celda-estacion: #fffdf5; }
+.calendario-main[data-estacion="otono"] { --color-estacion: #9a3412; --fondo-estacion: #fff7ed; --fondo-celda-estacion: #fffaf4; }
+.calendario-main[data-estacion="invierno"] { --color-estacion: #1e3a8a; --fondo-estacion: #eff6ff; --fondo-celda-estacion: #f8fbff; }
+.calendario-main[data-estacion="primavera"] { --color-estacion: #15803d; --fondo-estacion: #f0fdf4; --fondo-celda-estacion: #fbfffc; }
+.calendario-main .titulo-seccion { border-bottom-color: var(--color-estacion, #FFD600); }
+.calendario-main .titulo-seccion::after { content: " · " attr(data-estacion); color: var(--color-estacion, #17226B); font-size: 0.72em; font-weight: 600; }
+.partido-resumen-cal { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 30px; }
+.equipos-escudos-cal { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.equipos-escudos-cal img { width: 23px; height: 23px; object-fit: contain; flex: 0 0 auto; }
+.versus-cal { color: #94a3b8; font-size: 0.65rem; }
+.marcador-cal { color: #17226B; font-size: 0.82rem; font-weight: 700; white-space: nowrap; margin-left: auto; }
 
 .img-escudo-calendario {
     width: 22px !important;
@@ -332,6 +357,109 @@ body {
 
 .fila-equipo-cal span { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fuera-mes { background: #f9f9f9; }
+.partido-directo { border-left-color: #dc2626; background: #fff1f2; }
+.partido-evento small { display: block; color: #64748b; margin-bottom: 4px; }
+.detalle-partido, .clasificacion-section { background: white; border-radius: 12px; padding: 20px; margin-top: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.clasificacion-section { margin-top: 0; min-width: 0; padding: 16px 14px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.07); }
+.detalle-partido h3 { color: #17226B; margin-bottom: 8px; }
+.detalle-cabecera {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 20px;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 18px 12px;
+    border-radius: 10px;
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, var(--color-local-1) 0%, color-mix(in srgb, var(--color-local-2) 75%, transparent) 42%, transparent 100%) left / 43% 100% no-repeat,
+        linear-gradient(225deg, var(--color-visitante-1) 0%, color-mix(in srgb, var(--color-visitante-2) 75%, transparent) 42%, transparent 100%) right / 43% 100% no-repeat,
+        #f8fafc;
+}
+.detalle-equipo { display: flex; flex-direction: column; align-items: center; gap: 8px; color: #17226B; }
+.escudo-detalle { width: 64px; height: 64px; object-fit: contain; }
+.detalle-marcador h3 { font-size: 2rem; margin: 0; }
+.detalle-meta { background: #f8fafc; border-radius: 8px; padding: 10px 14px; color: #17226B; margin: 12px 0; text-align: center; }
+.forma-historial { display: flex; gap: 5px; }
+.forma-circulo { width: 22px; height: 22px; border-radius: 50%; color: white; display: inline-flex; justify-content: center; align-items: center; font-size: 0.7rem; font-weight: bold; }
+.forma-verde { background: #16a34a; }
+.forma-amarillo { background: #eab308; }
+.forma-rojo { background: #dc2626; }
+.forma-gris { background: #9ca3af; }
+.eventos-detalle { margin: 15px 0; padding: 12px; background: #f8fafc; border-radius: 8px; }
+.eventos-detalle { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+.eventos-columna { min-height: 24px; }
+.eventos-local { text-align: right; border-right: 3px solid var(--color-equipo); padding-right: 15px; }
+.eventos-visitante { text-align: left; border-left: 3px solid var(--color-equipo); padding-left: 15px; }
+.alineaciones-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+.alineaciones-grid h4 { color: #17226B; border-bottom: 2px solid #FFD600; padding-bottom: 5px; margin: 14px 0 8px; }
+.lista-alineacion, .plantilla-resumen { list-style: none; padding: 0; }
+.lista-alineacion li, .plantilla-resumen li { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid #f1f5f9; }
+.lista-alineacion small, .plantilla-resumen small { color: #64748b; margin-left: auto; font-size: 0.75rem; }
+.foto-jugador-mini { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: #f1f5f9; }
+.bandera-jugador { width: 20px; height: 14px; object-fit: cover; display: inline-block; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.bandera-detalle { width: 28px; height: 19px; }
+.plantilla-titulo { color: #17226B; margin-top: 15px; }
+.plantilla-publica { margin-top: 15px; }
+.plantilla-publica summary { cursor: pointer; list-style-position: inside; }
+.plantilla-publica summary span { color: #64748b; font-size: 0.8rem; font-weight: normal; }
+.login-developer { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.login-developer h1 { color: #17226B; margin: 15px 0 8px; }
+.login-developer form { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.login-developer input { padding: 10px; border: 1px solid #d1d5db; border-radius: 5px; }
+.logo-login { width: 70px; display: block; margin: auto; }
+.login-error { color: #dc2626; font-weight: bold; }
+.estado-directo { color: #dc2626; font-weight: bold; }
+.texto-ayuda { color: #64748b; margin: -8px 0 18px; line-height: 1.5; }
+.tabla-clasificacion-scroll { overflow-x: auto; }
+.tabla-clasificacion { width: 100%; border-collapse: collapse; min-width: 650px; }
+.tabla-clasificacion th { background: #17226B; color: white; padding: 10px; text-align: center; }
+.tabla-clasificacion td { padding: 9px 10px; border-bottom: 1px solid #eee; text-align: center; }
+.tabla-clasificacion td:nth-child(2) { text-align: left; font-weight: 600; }
+.calendario-layout .tabla-clasificacion tr.lider { background-color: #e6fffa; border-left: 4px solid #00b894; }
+.calendario-layout .tabla-clasificacion tr.playoff { background-color: #eef6ff; border-left: 4px solid #0984e3; }
+.calendario-layout .tabla-clasificacion tr.descenso { background-color: #fff5f5; border-left: 4px solid #d63031; }
+.calendario-layout .tabla-clasificacion-scroll { overflow: visible; }
+.calendario-layout .tabla-clasificacion { min-width: 0; table-layout: fixed; font-size: 0.78rem; }
+.calendario-layout .tabla-clasificacion th,
+.calendario-layout .tabla-clasificacion td { padding: 7px 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.calendario-layout .tabla-clasificacion th { padding: 8px 3px; }
+.calendario-layout .tabla-clasificacion th:first-child,
+.calendario-layout .tabla-clasificacion td:first-child { width: 22px; }
+.calendario-layout .tabla-clasificacion th:nth-child(2),
+.calendario-layout .tabla-clasificacion td:nth-child(2) { width: 42%; }
+.calendario-layout .tabla-clasificacion th:nth-child(n+3),
+.calendario-layout .tabla-clasificacion td:nth-child(n+3) { width: 8.3%; }
+.editor-plantillas { background: white; padding: 25px; border-radius: 12px; margin: 20px 0 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.plantilla-equipo { border: 1px solid #e5e7eb; border-radius: 8px; margin: 10px 0; padding: 12px; }
+.plantilla-equipo summary { cursor: pointer; color: #17226B; font-weight: bold; }
+.colores-equipo { display: flex; gap: 15px; flex-wrap: wrap; margin: 12px 0; color: #64748b; font-size: 0.85rem; }
+.colores-equipo label { display: flex; align-items: center; gap: 6px; }
+.colores-equipo input { width: 42px; height: 28px; padding: 2px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer; }
+.jugadores-editor { display: grid; gap: 8px; margin-top: 12px; }
+.jugador-editor { display: grid; grid-template-columns: 40px 1.3fr 1fr 70px 1.3fr 1.5fr; gap: 8px; align-items: center; }
+.jugador-editor input, .jugador-editor select { min-width: 0; padding: 7px; border: 1px solid #d1d5db; border-radius: 5px; }
+.foto-jugador { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; background: #f1f5f9; }
+.estado-guardado { color: #15803d; font-weight: bold; margin-left: 10px; }
+.estado-developer { background: #dcfce7; color: #166534; padding: 8px 12px; border-radius: 999px; font-weight: bold; font-size: 0.85rem; }
+.jugador-enlace { display: flex; align-items: center; gap: 8px; border: 0; background: transparent; cursor: pointer; padding: 0; color: #333; font: inherit; text-align: left; }
+.jugador-enlace:hover { color: #17226B; text-decoration: underline; }
+.jugadores-publicos { background: white; padding: 25px; border-radius: 12px; margin: 25px 0 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.filtro-jugadores { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; color: #17226B; font-weight: bold; }
+.filtro-jugadores select { padding: 9px; border: 1px solid #d1d5db; border-radius: 5px; }
+.grid-jugadores { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.jugador-card { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 15px 10px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 8px; cursor: pointer; color: #333; }
+.jugador-card:hover { border-color: #17226B; transform: translateY(-2px); }
+.jugador-card span { color: #64748b; font-size: 0.8rem; }
+.detalle-jugador { background: #f8fafc; border-left: 4px solid #FFD600; padding: 18px; margin-top: 20px; border-radius: 8px; }
+.jugador-detalle-cabecera { display: flex; align-items: center; gap: 15px; }
+.foto-jugador-detalle { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
+.jugador-detalle-cabecera h3 { color: #17226B; margin-bottom: 5px; }
+.jugador-detalle-cabecera p { margin: 3px 0; color: #64748b; }
+.jugador-estadisticas { display: flex; gap: 10px; align-items: baseline; margin-top: 15px; color: #64748b; }
+.jugador-estadisticas strong { color: #17226B; font-size: 1.5rem; margin-left: 15px; }
+.developer-footer-link { color: #FFD600; text-decoration: none; font-weight: bold; }
 
 /* ==========================================================================
    7. FOOTER
@@ -379,15 +507,23 @@ footer { background-color: #333; color: white; margin-top: auto; padding: 40px 0
 /* ==========================================================================
    9. RESPONSIVE
    ========================================================================== */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
     .header-flex { flex-direction: column; gap: 10px; }
     .nav-container { justify-content: center; width: 100%; }
     .hero-banner h1 { font-size: 2rem; }
     .location-container { flex-direction: column; }
     .location-map { min-height: 300px; }
-    .dias-semana, .grid-dias { grid-template-columns: repeat(1, 1fr); }
-    .dia-celda { min-height: auto; padding: 15px; }
+    .dias-semana, .grid-dias { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+    .dia-celda { min-height: 110px; padding: 7px; }
     .game-layout { grid-template-columns: 1fr; }
+    .calendario-layout { grid-template-columns: 1fr; }
+    .calendario-main { padding: 0 10px; }
+    .calendario-layout .clasificacion-section { margin-top: 0; }
+    .detalle-cabecera, .alineaciones-grid { grid-template-columns: 1fr; }
+    .eventos-detalle { grid-template-columns: 1fr; gap: 10px; }
+    .eventos-local, .eventos-visitante { text-align: left; border-left: 3px solid #3b82f6; border-right: 0; padding: 0 0 0 15px; }
+    .jugador-editor { grid-template-columns: 36px 1fr 1fr; }
+    .jugador-editor input:nth-of-type(n+3), .jugador-editor select { grid-column: span 1; }
     .stat-separator { display: none; }
     .stat-item { width: 100%; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
 }

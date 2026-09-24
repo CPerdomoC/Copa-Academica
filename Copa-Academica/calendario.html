@@ -19,118 +19,45 @@
         </div>
     </header>
 
-    <main class="container">
-        <section class="full-table-section">
-            <div class="seccion-encabezado-flex">
-                <div class="texto-encabezado">
-                    <h2 id="mes-anio-titulo" class="titulo-seccion">Calendario Oficial</h2>
+    <main class="container calendario-main">
+        <div class="calendario-layout">
+            <section class="full-table-section">
+                <div class="seccion-encabezado-flex">
+                    <div class="texto-encabezado">
+                        <h2 id="mes-anio-titulo" class="titulo-seccion">Calendario Oficial</h2>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="cambiarMes(-1)" class="btn-simular">Anterior</button>
+                        <button onclick="cambiarMes(1)" class="btn-simular">Siguiente</button>
+                    </div>
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="cambiarMes(-1)" class="btn-simular">Anterior</button>
-                    <button onclick="cambiarMes(1)" class="btn-simular">Siguiente</button>
-                </div>
-            </div>
 
-            <div class="calendario-mensual">
-                <div class="dias-semana">
-                    <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+                <div class="calendario-mensual">
+                    <div class="dias-semana">
+                        <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+                    </div>
+                    <div id="calendario-grid-mensual" class="grid-dias"></div>
                 </div>
-                <div id="calendario-grid-mensual" class="grid-dias"></div>
-            </div>
-        </section>
+                <div id="detalle-partido" class="detalle-partido hidden"></div>
+            </section>
+
+            <section class="clasificacion-section">
+                <h2 class="titulo-seccion">Clasificación en tiempo real</h2>
+                <div class="tabla-clasificacion-scroll">
+                    <table class="tabla-clasificacion">
+                        <thead><tr><th>#</th><th>Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>Pts</th></tr></thead>
+                        <tbody id="clasificacion-calendario"></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
     </main>
 
     <script src="funciones.js"></script>
     <script>
-        // Configuración Inicial
-        let fechaActual = new Date(2025, 8, 1); // Empezamos en Septiembre 2025
-        let calendarioCompleto = []; 
-
-        function generarTemporada() {
-            let equipos = [...nombresEquiposBase]; 
-            let totalJornadas = equipos.length - 1; 
-            let partidos = [];
-
-            for (let j = 0; j < totalJornadas; j++) {
-
-                let fechaLunes = new Date(2025, 8, 1 + (j * 7)); 
-                
-                for (let i = 0; i < equipos.length / 2; i++) {
-                    let local = equipos[i];
-                    let visit = equipos[equipos.length - 1 - i];
-                    
-                    if (j % 2 === 1) [local, visit] = [visit, local];
-
-                    // REPARTO SEMANAL:
-                    // i va de 0 a 9 (10 partidos). 
-                    // Usamos % 7 para que los partidos se repartan de Lunes (0) a Domingo (6)
-                    let fechaPartido = new Date(fechaLunes);
-                    let diaExtra = i % 7; 
-                    fechaPartido.setDate(fechaLunes.getDate() + diaExtra);
-
-                    partidos.push({
-                        fecha: fechaPartido,
-                        local: local,
-                        visit: visit,
-                        escL: `Assets/${obtenerNombreEscudo(local)}`,
-                        escV: `Assets/${obtenerNombreEscudo(visit)}`
-                    });
-                }
-                
-                // Rotación de equipos (Algoritmo de Berger)
-                equipos.splice(1, 0, equipos.pop());
-            }
-            return partidos;
-        }
-
-        function cambiarMes(delta) {
-            fechaActual.setMonth(fechaActual.getMonth() + delta);
-            renderizarCalendario();
-        }
-
-        function renderizarCalendario() {
-            const grid = document.getElementById('calendario-grid-mensual');
-            const titulo = document.getElementById('mes-anio-titulo');
-            grid.innerHTML = "";
-
-            const anio = fechaActual.getFullYear();
-            const mes = fechaActual.getMonth();
-            titulo.innerText = `${new Intl.DateTimeFormat('es-ES', { month: 'long' }).format(fechaActual).toUpperCase()} ${anio}`;
-
-            const primerDia = new Date(anio, mes, 1).getDay(); 
-            const diaSemanaInicio = primerDia === 0 ? 6 : primerDia - 1; 
-            const diasMes = new Date(anio, mes + 1, 0).getDate();
-
-            for (let i = 0; i < diaSemanaInicio; i++) grid.innerHTML += `<div class="dia-celda fuera-mes"></div>`;
-
-            for (let d = 1; d <= diasMes; d++) {
-                // Filtramos partidos que coincidan en día, mes y año exactos
-                let partidosHoy = calendarioCompleto.filter(p => 
-                    p.fecha.getDate() === d && 
-                    p.fecha.getMonth() === mes && 
-                    p.fecha.getFullYear() === anio
-                );
-
-                let htmlPartidos = partidosHoy.map(p => `
-                    <div class="partido-evento">
-                        <div class="fila-equipo-cal" style="margin-bottom: 4px;">
-                            <span>${p.local}</span> 
-                            <img src="${p.escL}" class="img-escudo-calendario" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'">
-                        </div>
-                        <div class="fila-equipo-cal">
-                            <span>${p.visit}</span> 
-                            <img src="${p.escV}" class="img-escudo-calendario" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'">
-                        </div>
-                    </div>
-                `).join('');
-
-                grid.innerHTML += `<div class="dia-celda"><span class="dia-numero">${d}</span>${htmlPartidos}</div>`;
-            }
-        }
-
         window.onload = function() {
-            calendarioCompleto = generarTemporada();
-            renderizarCalendario();
+            window.fechaCalendario = new Date();
+            renderizarCalendarioLiga();
         };
     </script>
 </body>

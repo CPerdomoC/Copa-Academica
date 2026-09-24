@@ -45,16 +45,34 @@
                     <div class="tabla-header-full"><span>#</span><span>Equipo</span><span>PJ</span><span>G</span><span>E</span><span>P</span><span>Pts</span></div>
                     <ul class="lista-equipos" id="tabla-carrera"></ul>
                 </div>
-                <aside class="tabla-container" style="padding: 15px;">
-                    <h3 style="color: #17226B; border-bottom: 2px solid #FFD600; padding-bottom: 5px;">Pichichi</h3>
+                <aside class="tabla-container pichichi-panel">
+                    <h3>Pichichi</h3>
                     <ul id="lista-goleadores" class="goleadores-list"></ul>
                 </aside>
             </div>
 
-            <div id="panel-resultados" class="resultados-jornada hidden">
-                <h3 style="color: #17226B; text-align: center; margin-bottom: 20px; font-weight: bold;">ACTA OFICIAL - JORNADA <span id="num-acta"></span></h3>
+            <details id="panel-resultados" class="resultados-jornada" open>
+                <summary>Acta oficial · Jornada <span id="num-acta"></span></summary>
                 <div id="lista-partidos-detallados"></div>
-            </div>
+            </details>
+
+            <details class="estadisticas-carrera tabla-container">
+                <summary>Estadísticas de jugadores</summary>
+                <p class="texto-ayuda">Los jugadores son los mismos que aparecen en la liga normal y sus estadísticas se actualizan con cada jornada simulada.</p>
+                <div class="filtro-estadisticas">
+                    <label for="filtro-estadisticas-equipo">Ver estadísticas de:</label>
+                    <select id="filtro-estadisticas-equipo" onchange="renderizarEstadisticasCarrera()">
+                        <option value="todos">Todos los equipos</option>
+                    </select>
+                </div>
+                <div class="tabla-clasificacion-scroll">
+                    <table class="tabla-clasificacion">
+                        <thead><tr><th>#</th><th>Jugador</th><th>Equipo</th><th>Partidos</th><th>Goles</th></tr></thead>
+                        <tbody id="tabla-estadisticas-carrera"></tbody>
+                    </table>
+                </div>
+                <p id="resumen-final-carrera" class="resumen-final-carrera hidden"></p>
+            </details>
         </section>
     </main>
 

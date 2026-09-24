@@ -20,23 +20,42 @@
     </header>
 
     <main class="container">
-        <h2 class="titulo-seccion" style="margin-top: 40px;">Clubes Oficiales</h2>
+        <div class="seccion-encabezado-flex">
+            <h2 class="titulo-seccion" style="margin-top: 40px;">Clubes Oficiales</h2>
+            <span id="estado-developer" class="estado-developer hidden">Modo developer activo</span>
+        </div>
         <div id="grid-equipos" class="equipos-grid"></div>
+        <section id="jugadores" class="jugadores-publicos">
+            <h2 class="titulo-seccion">Jugadores</h2>
+            <p class="texto-ayuda">Selecciona un jugador para consultar sus partidos y goles.</p>
+            <div id="filtro-jugadores" class="filtro-jugadores"></div>
+            <div id="grid-jugadores" class="grid-jugadores"></div>
+            <div id="detalle-jugador" class="detalle-jugador hidden"></div>
+        </section>
+        <section id="editor-plantillas" class="editor-plantillas hidden">
+            <h2 class="titulo-seccion">Base de datos de jugadores</h2>
+            <p class="texto-ayuda">Solo el modo developer puede editar nombre, nacionalidad, edad, posición e imagen. Las imágenes se muestran en formato compacto.</p>
+            <button class="btn-primary" type="button" onclick="guardarPlantillas()">Guardar cambios</button>
+            <span id="estado-guardado" class="estado-guardado" role="status"></span>
+            <div id="lista-plantillas"></div>
+        </section>
     </main>
 
     <script src="funciones.js"></script>
         <script>
             const grid = document.getElementById('grid-equipos');
             
+            const plantillas = obtenerPlantillas();
+            const datosEquipos = obtenerDatosEquipos();
             nombresEquiposBase.forEach(nombre => {
                 const nombreArchivo = obtenerNombreEscudo(nombre);
-                const pais = origenesEquipos[nombre] || "espana";
+                const pais = datosEquipos[nombre].bandera;
                 const descripcion = historiasEquipos[nombre] || `La historia de ${nombre} está por escribirse...`;
 
                 grid.innerHTML += `
-                    <div class="equipo-card">
+                    <div class="equipo-card" data-equipo-card="${nombre}">
                         <div class="card-header">
-                            <div class="bandera-fondo" style="background-image: url('Assets/${pais}.png')">
+                            <div class="bandera-fondo" style="background-image: url('${rutaBandera(pais)}')">
                                 <div class="escudo-protector">
                                     <img src="Assets/${nombreArchivo}" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5323/5323982.png'">
                                 </div>
@@ -47,10 +66,129 @@
                             <p contenteditable="true" class="editable-text">
                                 ${descripcion}
                             </p>
+                            <details class="plantilla-publica">
+                                <summary class="plantilla-titulo">Plantilla <span>(${plantillas[nombre].length} jugadores)</span></summary>
+                                <ul class="plantilla-resumen">${plantillas[nombre].map(jugador => `<li><button class="jugador-enlace" onclick="mostrarJugador('${jugador.nombre}', '${nombre}')"><img src="${jugador.imagen || ICONO_JUGADOR}" class="foto-jugador-mini"><img src="${rutaBanderaJugador(jugador.nacionalidad)}" class="bandera-jugador" alt="${jugador.nacionalidad}" title="${jugador.nacionalidad}">${jugador.nombre}</button><small>${jugador.posicion}</small></li>`).join("")}</ul>
+                            </details>
                         </div>
                     </div>
                 `;
             });
+
+            function renderizarEditor() {
+                const contenedor = document.getElementById("lista-plantillas");
+                contenedor.innerHTML = nombresEquiposBase.map(equipo => `
+                    <details class="plantilla-equipo">
+                        <summary>${equipo}</summary>
+                        <div class="colores-equipo">
+                            <label>Color principal <input type="color" data-equipo-color="${equipo}" data-color-index="0" value="${datosEquipos[equipo].colores[0]}"></label>
+                            <label>Color secundario <input type="color" data-equipo-color="${equipo}" data-color-index="1" value="${datosEquipos[equipo].colores[1]}"></label>
+                        </div>
+                        <div class="bandera-equipo-editor">
+                            <label for="bandera-${obtenerNombreEscudo(equipo)}">Bandera o fondo</label>
+                            <select id="bandera-${obtenerNombreEscudo(equipo)}" data-equipo-bandera="${equipo}">
+                                ${banderasDisponibles.map(bandera => `<option value="${bandera}" ${datosEquipos[equipo].bandera === bandera ? "selected" : ""}>${bandera}</option>`).join("")}
+                            </select>
+                            <input type="text" data-equipo-bandera-custom="${equipo}" value="${datosEquipos[equipo].bandera}" placeholder="o Assets/mi-bandera.png">
+                            <small>Usa un nombre de bandera de Assets o una ruta personalizada.</small>
+                        </div>
+                        <div class="jugadores-editor">
+                            ${(plantillas[equipo] || []).map((jugador, indice) => `
+                                <div class="jugador-editor">
+                                    <img class="foto-jugador" src="${jugador.imagen || ICONO_JUGADOR}" alt="">
+                                    <input data-equipo="${equipo}" data-indice="${indice}" data-campo="nombre" value="${jugador.nombre}">
+                                    <input data-equipo="${equipo}" data-indice="${indice}" data-campo="nacionalidad" value="${jugador.nacionalidad}" title="Nacionalidad; la bandera se carga automáticamente">
+                                    <input data-equipo="${equipo}" data-indice="${indice}" data-campo="edad" type="number" min="15" max="45" value="${jugador.edad}">
+                                    <select data-equipo="${equipo}" data-indice="${indice}" data-campo="posicion">${posicionesPlantilla.map(posicion => `<option ${posicion === jugador.posicion ? "selected" : ""}>${posicion}</option>`).join("")}</select>
+                                    <input data-equipo="${equipo}" data-indice="${indice}" data-campo="imagen" placeholder="URL o ruta de imagen" value="${jugador.imagen}">
+                                </div>`).join("")}
+                        </div>
+                    </details>`).join("");
+                contenedor.querySelectorAll("input:not([data-equipo-color]):not([data-equipo-bandera-custom]), select[data-campo]").forEach(campo => {
+                    campo.addEventListener("input", guardarJugador);
+                    campo.addEventListener("change", guardarJugador);
+                });
+                contenedor.querySelectorAll("[data-equipo-color]").forEach(campo => campo.addEventListener("input", guardarColorEquipo));
+                contenedor.querySelectorAll("[data-equipo-bandera]").forEach(campo => campo.addEventListener("change", guardarBanderaEquipo));
+                contenedor.querySelectorAll("[data-equipo-bandera-custom]").forEach(campo => campo.addEventListener("input", guardarBanderaPersonalizada));
+            }
+
+            function renderizarJugadores(equipoSeleccionado = nombresEquiposBase[0]) {
+                const filtro = document.getElementById("filtro-jugadores");
+                const gridJugadores = document.getElementById("grid-jugadores");
+                filtro.innerHTML = `<label for="selector-equipo">Equipo</label><select id="selector-equipo">${nombresEquiposBase.map(equipo => `<option ${equipo === equipoSeleccionado ? "selected" : ""}>${equipo}</option>`).join("")}</select>`;
+                filtro.querySelector("select").addEventListener("change", evento => renderizarJugadores(evento.target.value));
+                gridJugadores.innerHTML = (plantillas[equipoSeleccionado] || []).map(jugador => `<button class="jugador-card" onclick="mostrarJugador('${jugador.nombre}', '${equipoSeleccionado}')"><img src="${jugador.imagen || ICONO_JUGADOR}" class="foto-jugador"><strong><img src="${rutaBanderaJugador(jugador.nacionalidad)}" class="bandera-jugador" alt="${jugador.nacionalidad}">${jugador.nombre}</strong><span>${jugador.posicion}</span></button>`).join("");
+            }
+
+            function guardarJugador(evento) {
+                const campo = evento.target;
+                const jugador = plantillas[campo.dataset.equipo][Number(campo.dataset.indice)];
+                jugador[campo.dataset.campo] = campo.dataset.campo === "edad" ? Number(campo.value) : campo.value.trim();
+                guardarBaseDatos(plantillas, datosEquipos);
+                if (campo.dataset.campo === "imagen") campo.parentElement.querySelector("img").src = jugador.imagen || ICONO_JUGADOR;
+            }
+
+            function guardarColorEquipo(evento) {
+                const campo = evento.target;
+                datosEquipos[campo.dataset.equipoColor].colores[Number(campo.dataset.colorIndex)] = campo.value;
+                guardarBaseDatos(plantillas, datosEquipos);
+            }
+
+            function actualizarBanderaPublica(equipo) {
+                const tarjeta = document.querySelector(`[data-equipo-card="${equipo}"]`);
+                if (tarjeta) tarjeta.querySelector(".bandera-fondo").style.backgroundImage = `url('${rutaBandera(datosEquipos[equipo].bandera)}')`;
+            }
+
+            function guardarBanderaEquipo(evento) {
+                const equipo = evento.target.dataset.equipoBandera;
+                datosEquipos[equipo].bandera = evento.target.value;
+                const personalizado = document.querySelector(`[data-equipo-bandera-custom="${equipo}"]`);
+                personalizado.value = evento.target.value;
+                guardarBaseDatos(plantillas, datosEquipos);
+                actualizarBanderaPublica(equipo);
+            }
+
+            function guardarBanderaPersonalizada(evento) {
+                const equipo = evento.target.dataset.equipoBanderaCustom;
+                datosEquipos[equipo].bandera = evento.target.value.trim() || "espana";
+                guardarBaseDatos(plantillas, datosEquipos);
+                actualizarBanderaPublica(equipo);
+            }
+
+            window.guardarPlantillas = function() {
+                if (sessionStorage.getItem(CLAVE_DEVELOPER) !== "true") {
+                    window.location.href = "developer.html";
+                    return;
+                }
+                localStorage.setItem(CLAVE_PLANTILLAS, JSON.stringify(plantillas));
+                renderizarJugadores(document.getElementById("selector-equipo")?.value || nombresEquiposBase[0]);
+                document.getElementById("estado-guardado").innerText = "Cambios guardados correctamente.";
+                window.setTimeout(() => document.getElementById("estado-guardado").innerText = "", 2500);
+            };
+
+            window.activarEditorPlantillas = function() {
+                if (sessionStorage.getItem(CLAVE_DEVELOPER) !== "true") {
+                    window.location.href = "developer.html";
+                    return;
+                }
+                document.getElementById("editor-plantillas").classList.remove("hidden");
+                document.getElementById("estado-developer").classList.remove("hidden");
+                renderizarEditor();
+                document.getElementById("editor-plantillas").scrollIntoView({ behavior: "smooth", block: "start" });
+            };
+            renderizarJugadores();
+            if (sessionStorage.getItem(CLAVE_DEVELOPER) === "true" || new URLSearchParams(window.location.search).get("modo") === "developer") {
+                sessionStorage.setItem(CLAVE_DEVELOPER, "true");
+                activarEditorPlantillas();
+            }
         </script>
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-section"><h4>Copa Académica</h4><p>Competición amateur y ficticia en tiempo real.</p></div>
+            <div class="footer-section"><a class="developer-footer-link" href="developer.html">Acceso developer</a></div>
+        </div>
+        <div class="footer-bottom"><p>© Copa Académica. Todos los derechos reservados.</p></div>
+    </footer>
 </body>
 </html>

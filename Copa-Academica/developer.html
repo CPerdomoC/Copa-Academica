@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso developer | Copa Académica</title>
+    <link rel="stylesheet" href="CSS/styles.css">
+</head>
+<body>
+    <main class="container login-developer">
+        <section class="setup-container">
+            <img src="Assets/trofeo-1.png" class="logo-login" alt="Copa Académica">
+            <h1>Acceso developer</h1>
+            <p>Gestiona las plantillas y los datos de la competición.</p>
+            <form id="developer-login">
+                <label for="developer-password">Contraseña</label>
+                <input id="developer-password" type="password" autocomplete="current-password" required>
+                <button class="btn-primary" type="submit">Entrar</button>
+                <p id="login-error" class="login-error hidden">La contraseña no es válida.</p>
+            </form>
+        </section>
+    </main>
+    <script src="funciones.js"></script>
+    <script>
+        document.getElementById("developer-login").addEventListener("submit", function (evento) {
+            evento.preventDefault();
+            const password = document.getElementById("developer-password").value;
+            if (password !== "developer") {
+                document.getElementById("login-error").classList.remove("hidden");
+                return;
+            }
+            sessionStorage.setItem(CLAVE_DEVELOPER, "true");
+            window.location.href = "equipos.html?modo=developer";
+        });
+    </script>
+</body>
+</html>
