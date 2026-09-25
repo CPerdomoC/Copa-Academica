@@ -22,7 +22,11 @@
     <main class="container">
         <div class="seccion-encabezado-flex">
             <h2 class="titulo-seccion" style="margin-top: 40px;">Clubes Oficiales</h2>
-            <span id="estado-developer" class="estado-developer hidden">Modo developer activo</span>
+            <div class="developer-controls">
+                <span id="estado-developer" class="estado-developer hidden">Modo developer activo</span>
+                <button id="btn-abrir-editor" class="btn-primary hidden" type="button" onclick="activarEditorPlantillas()">Editar plantillas</button>
+                <button id="btn-salir-developer" class="btn-secondary hidden" type="button" onclick="cerrarSesionDeveloper()">Salir del developer</button>
+            </div>
         </div>
         <div id="grid-equipos" class="equipos-grid"></div>
         <section id="jugadores" class="jugadores-publicos">
@@ -167,6 +171,15 @@
                 window.setTimeout(() => document.getElementById("estado-guardado").innerText = "", 2500);
             };
 
+            window.cerrarSesionDeveloper = function() {
+                sessionStorage.removeItem(CLAVE_DEVELOPER);
+                document.getElementById("editor-plantillas").classList.add("hidden");
+                document.getElementById("estado-developer").classList.add("hidden");
+                document.getElementById("btn-abrir-editor").classList.add("hidden");
+                document.getElementById("btn-salir-developer").classList.add("hidden");
+                document.getElementById("lista-plantillas").innerHTML = "";
+            };
+
             window.activarEditorPlantillas = function() {
                 if (sessionStorage.getItem(CLAVE_DEVELOPER) !== "true") {
                     window.location.href = "developer.html";
@@ -174,13 +187,16 @@
                 }
                 document.getElementById("editor-plantillas").classList.remove("hidden");
                 document.getElementById("estado-developer").classList.remove("hidden");
+                document.getElementById("btn-abrir-editor").classList.add("hidden");
                 renderizarEditor();
                 document.getElementById("editor-plantillas").scrollIntoView({ behavior: "smooth", block: "start" });
             };
             renderizarJugadores();
             if (sessionStorage.getItem(CLAVE_DEVELOPER) === "true" || new URLSearchParams(window.location.search).get("modo") === "developer") {
                 sessionStorage.setItem(CLAVE_DEVELOPER, "true");
-                activarEditorPlantillas();
+                document.getElementById("estado-developer").classList.remove("hidden");
+                document.getElementById("btn-abrir-editor").classList.remove("hidden");
+                document.getElementById("btn-salir-developer").classList.remove("hidden");
             }
         </script>
     <footer>

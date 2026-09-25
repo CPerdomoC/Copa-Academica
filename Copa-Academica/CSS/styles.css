@@ -269,6 +269,8 @@ body {
 .resultados-jornada { background: #fff; border-radius: 12px; padding: 20px; margin-top: 25px; border: 1px solid #ddd; }
 .resultados-jornada summary, .estadisticas-carrera summary { cursor: pointer; color: #17226B; font-weight: bold; font-size: 1.15rem; }
 .resultados-jornada summary { text-align: center; margin-bottom: 20px; }
+.selector-jornada-anterior { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 18px; color: #17226B; font-weight: bold; }
+.selector-jornada-anterior select { padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 5px; background: white; }
 .pichichi-panel { align-self: start; padding: 15px; }
 .pichichi-panel h3 { color: #17226B; border-bottom: 2px solid #FFD600; padding-bottom: 5px; margin: 0; }
 .pichichi-panel .goleadores-list { max-height: 520px; overflow-y: auto; }

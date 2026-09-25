@@ -56,6 +56,17 @@
                 <div id="lista-partidos-detallados"></div>
             </details>
 
+            <details id="historial-resultados" class="resultados-jornada">
+                <summary>Resultados de jornadas anteriores</summary>
+                <div class="selector-jornada-anterior">
+                    <label for="selector-jornada-anterior">Consultar jornada:</label>
+                    <select id="selector-jornada-anterior" onchange="mostrarJornadaAnterior(this.value)">
+                        <option value="">Selecciona una jornada</option>
+                    </select>
+                </div>
+                <div id="lista-jornada-anterior"></div>
+            </details>
+
             <details class="estadisticas-carrera tabla-container">
                 <summary>Estadísticas de jugadores</summary>
                 <p class="texto-ayuda">Los jugadores son los mismos que aparecen en la liga normal y sus estadísticas se actualizan con cada jornada simulada.</p>

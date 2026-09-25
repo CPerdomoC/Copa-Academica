@@ -78,6 +78,7 @@ let jornadaActual = 0;
 let registroGoleadores = {};
 let indicesRotacion = [];
 let plantillasCarrera = {};
+let historialJornadasCarrera = [];
 
 function copiarPlantillasParaCarrera() {
     const plantillasBase = obtenerPlantillas();
@@ -153,6 +154,7 @@ function validarEIniciar() {
     jornadaActual = 0;
     registroGoleadores = {};
     indicesRotacion = [];
+    historialJornadasCarrera = [];
     plantillasCarrera = copiarPlantillasParaCarrera();
     equipos = nombresEquiposBase.map(nombre => {
         const esHumano = mapeo[nombre] || null;
@@ -188,6 +190,9 @@ function validarEIniciar() {
     indicesRotacion = equipos.map((_, i) => i);
     document.getElementById('setup-section').classList.add('hidden');
     document.getElementById('game-section').classList.remove('hidden');
+    document.getElementById('historial-resultados').classList.add('hidden');
+    document.getElementById('selector-jornada-anterior').innerHTML = '<option value="">Selecciona una jornada</option>';
+    document.getElementById('lista-jornada-anterior').innerHTML = "";
     renderizarTodo();
 }
 
@@ -262,12 +267,32 @@ function simularSiguienteJornada() {
                     </div>
                 </div>`;
         }
+        historialJornadasCarrera.push({ jornada: jornadaActual, html: listaDetalles.innerHTML });
+        renderizarHistorialJornadas();
         indicesRotacion.splice(1, 0, indicesRotacion.pop());
         renderizarTodo();
         btn.innerText = "Simular Jornada";
         document.getElementById('game-section').classList.remove('loading');
         renderizarEstadisticasCarrera();
     }, 600);
+}
+
+function renderizarHistorialJornadas() {
+    const historial = document.getElementById("historial-resultados");
+    const selector = document.getElementById("selector-jornada-anterior");
+    if (!historial || !selector) return;
+    historial.classList.toggle("hidden", historialJornadasCarrera.length < 2);
+    selector.innerHTML = '<option value="">Selecciona una jornada</option>' +
+        historialJornadasCarrera.slice(0, -1).reverse()
+            .map(acta => `<option value="${acta.jornada}">Jornada ${acta.jornada}</option>`)
+            .join("");
+}
+
+function mostrarJornadaAnterior(jornada) {
+    const contenedor = document.getElementById("lista-jornada-anterior");
+    if (!contenedor) return;
+    const acta = historialJornadasCarrera.find(item => String(item.jornada) === String(jornada));
+    contenedor.innerHTML = acta ? acta.html : "";
 }
 
 function renderizarTodo() {
